@@ -1,0 +1,60 @@
+---
+title: Serveur
+description: Configuration détaillée des backups
+sidebar:
+  order: 2
+---
+import { Aside, LinkCard, CardGrid, FileTree } from '@astrojs/starlight/components';
+
+Ce fichier décrit la configuration du serveur et des options de stockage utilisées par Mini Backup. Plus tard nous avons comme souhait de pouvoir configurer des "secrets manager" comme infisical.
+
+
+## Champs de configuration
+
+### Serveur (`server`)
+Configuration liée au serveur d'application.
+
+| Champ      | Type    | Description                                                                                  | Exemple                      |
+|------------|---------|----------------------------------------------------------------------------------------------|------------------------------|
+| `env`      | string  | Indique l'environnement d'exécution du serveur. La valeur peut être extraite d'une variable d'environnement. | `${{GO_ENV}}`               |
+| `port`     | int     | Port sur lequel le serveur écoute.                                                          | `8080`                      |
+| `debug`    | bool    | Active ou désactive le mode débogage. Si activé, des informations supplémentaires sont affichées dans les logs. | `true` ou `false`           |
+| `log`      | string  | Chemin du fichier où les journaux du serveur sont sauvegardés.                               | `./logs/server.log`          |
+
+---
+
+### Stockage distant (`rstorage`)
+Décrit les configurations des espaces de stockage S3 où les sauvegardes seront déposées.
+
+#### Champs communs pour chaque espace de stockage
+| Champ          | Type    | Description                                                                                  | Exemple                                |
+|-----------------|---------|----------------------------------------------------------------------------------------------|----------------------------------------|
+| `endpoint`      | string  | URL de l'endpoint S3 du fournisseur.                                                         | `https://s3.fr-par.scw.cloud`          |
+| `bucket_name`   | string  | Nom du bucket S3 où les fichiers sont stockés.                                               | `dev-backup-go`                        |
+| `access_key`    | string  | Clé d'accès utilisée pour authentifier les requêtes. Peut référencer une variable d'environnement. | `${{SCW_ACCESS_KEY}}`                 |
+| `secret_key`    | string  | Clé secrète utilisée pour authentifier les requêtes. Peut référencer une variable d'environnement. | `${{SCW_SECRET_KEY}}`                 |
+| `region`        | string  | Région dans laquelle se trouve le bucket.                                                    | `fr-par`                               |
+
+
+<Aside type="danger">Pour l'instant il y a le paramètre "S3ForcePathStyle" qui est activé </Aside>
+
+#### Exemple de configuration
+```yaml
+server:
+  env: "${{GO_ENV}}"
+  port: 8080
+  debug: false
+  log: "./logs/server.log"
+rstorage:
+  scaleway1:
+    endpoint: "https://s3.fr-par.scw.cloud"
+    bucket_name: "dev-backup-go"
+    access_key: "${{SCW_ACCESS_KEY}}"
+    secret_key: "${{SCW_SECRET_KEY}}"
+    region: "fr-par"
+  scaleway-backup:
+    endpoint: "https://s3.fr-par.scw.cloud"
+    bucket_name: "dev-backup-go"
+    access_key: "${{SCW_ACCESS_KEY_BACKUP}}"
+    secret_key: "${{SCW_SECRET_KEY_BACKUP}}"
+    region: "fr-par"

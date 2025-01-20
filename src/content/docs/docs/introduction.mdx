@@ -1,0 +1,150 @@
+---
+title: Introduction
+sidebar:
+  order: 1
+description: Introduction a mini backup.
+---
+
+import { Aside, LinkCard, CardGrid, FileTree } from '@astrojs/starlight/components';
+
+Mini Backup est conçu pour les environnements cloud, multicloud, ou encore les petites infrastructures domestiques utilisant Docker/Linux. Il permet de sauvegarder des bases de données, des chemins de dossiers locaux, de chiffrer les sauvegardes et de les déposer sur plusieurs serveurs S3.
+
+<Aside type="caution" title="En cours de développement">
+  Ce logiciel est actuellement en beta version 0.0.1, donc il n'y a pas l'ensemble des fonctionnalités et tout n'est pas sécurisé.
+</Aside>
+
+## Structure
+
+<FileTree>
+
+- app
+    - backup-server
+    - backup-cli
+    - .env
+    - logs
+        - backup-tool.log
+    - config
+        - config.yml
+        - server.yml
+    - backups
+        - backup_example.gz.enc
+
+</FileTree>
+
+## config.yml
+
+Voici la configuration de trois backups différents, un pour une base de données MySQL, un pour un dossier et un pour une base de données MongoDB.
+
+```yaml
+backups:
+  glpi:
+    type: mysql
+    mysql: 
+      databases: [
+        "glpidb",
+      ]
+      host: "localhost"
+      port: "3306"
+      user: "glpi_user"
+      password: "glpi"
+      ssl: "false"
+    path:
+      local: "./backups"
+      s3: "backup/glpi-dev/mysql"
+    retention:
+      standard: 
+        days: 14
+      glacier:
+        days: 365
+    schedule:
+      standard: "*/50 * * * *"
+      glacier: "0 18 * * 5"
+
+  glpi-file:
+    type: folder
+    folder: [
+      "/home/killian/dev/aidalinfo/backup-tool-go/glpi/data",
+    ]
+    path:
+      local: "./backups"
+      s3: "backup/glpi-dev/folder"
+    retention:
+      standard: 
+        days: 14
+    schedule:
+      standard: "0 18 * * 5"
+      glacier: "0 18 * * 5"
+
+  mongo:
+    type: mongo
+    mongo: 
+      host: "localhost"
+      port: "27018"
+      user: "root"
+      password: "example"
+      ssl: false
+    path:
+      local: "./backups"
+      s3: "backup/mongo/mongo"
+    retention:
+      standard: 
+        days: 14
+      glacier:
+        days: 365
+    schedule:
+      standard: "*/60 * * * *"
+```
+<LinkCard
+    title="En savoir plus"
+    href="/docs/configuration/backup"
+    description="Configuration détaillée des backups"
+/>
+
+## server.yml
+
+Il existe le fichier server.yaml qui va permettre de configurer le port de l'API ou encore les rstorage (remote storage) pour les backups.
+Il est possible d'indiquer plusieurs endpoint S3 pour créer une redondance des backups.
+
+```yaml
+server:
+  env: "${{GO_ENV}}"
+  port: 8080
+  debug: false
+  log: "./logs/server.log"
+
+rstorage:
+  scaleway1:
+    endpoint: "https://s3.fr-par.scw.cloud"
+    bucket_name: "dev-backup-go"
+    access_key: "${{SCW_ACCESS_KEY}}"
+    secret_key: "${{SCW_SECRET_KEY}}"
+    region: "fr-par"
+  scaleway-backup:
+    endpoint: "https://s3.fr-par.scw.cloud"
+    bucket_name: "dev-backup-go"
+    access_key: "${{SCW_ACCESS_KEY_BACKUP}}"
+    secret_key: "${{SCW_SECRET_KEY_BACKUP}}"
+    region: "fr-par"
+```
+
+<LinkCard
+    title="En savoir plus"
+    href="/docs/configuration/server"
+    description="Configuration détaillée du server"
+/>
+
+
+Pour commencer avec les meilleures conditions, vous devez choisir si vous voulez utilisez la version docker ou build le projet pour le deployer.
+
+<CardGrid>
+    <LinkCard
+    title="Docker"
+    href="/docs/installation/docker"
+    description="Guide d'installation avec docker'"
+    />
+    <LinkCard
+    title="Binaires"
+    href="/docs/installation/binaries"
+    description="Guide d'installation pour build le projet"
+    />
+</CardGrid>

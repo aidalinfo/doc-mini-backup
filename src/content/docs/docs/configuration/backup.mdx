@@ -1,0 +1,137 @@
+---
+title: Backups
+description: Configuration détaillée des backups
+sidebar:
+  # Set a custom order for the link (lower numbers are displayed higher up)
+  order: 2
+---
+
+import { Aside, LinkCard, CardGrid, FileTree } from '@astrojs/starlight/components';
+
+
+Les sont configuration de backup sont centraliser dans un fichiers qui permet de déclarer les types pris en charge par le système de backup.
+
+A l'avenir nous pourrons charger plusieurs fichiers yaml dans ```./config/config.d```
+
+
+## Structure de configuration
+
+```yaml
+backups:
+  <nom_tâche>:
+    type: <type_de_sauvegarde>
+    <configuration_spécifique_au_type>:
+      ...
+    path:
+      local: <chemin_local>
+      s3: <chemin_s3>
+    retention:
+      standard:
+        days: <durée_de_rétention_en_jours>
+      glacier:
+        days: <durée_de_rétention_en_jours>
+    schedule:
+      standard: <expression_CRON>
+      glacier: <expression_CRON>
+```
+
+## Champs disponibles
+
+### **`<nom_tâche>`**
+- **Description** : Nom unique de la tâche de sauvegarde.
+- **Exemple** : `glpi-client`, `mongo-prod`, `glpi-file`.
+
+---
+
+### **`type`**
+- **Description** : Type de sauvegarde à effectuer.
+- **Valeurs possibles** :
+  - `mysql` : Sauvegarde de bases de données MySQL.
+  - `mongo` : Sauvegarde de bases de données MongoDB.
+  - `folder` : Sauvegarde de dossiers locaux.
+  - `s3` : Sauvegarde de bucket S3.
+- **Exemple** : `type: mysql`.
+
+<Aside type="tip" title="Prochaines intégration">
+    Nous travaillons sur l'intégration de nouvelles sources de données comme PostreSQL et Kubernetes. 
+</Aside>
+
+---
+
+### **`<type_spécifique>`**
+Les champs spécifiques varient selon le type de sauvegarde.
+
+#### **`mysql`**
+- **`databases`** : Liste des bases de données à sauvegarder.
+- **`host`** : Adresse du serveur MySQL.
+- **`port`** : Port utilisé par MySQL.
+- **`user`** : Utilisateur MySQL.
+- **`password`** : Mot de passe MySQL.
+- **`ssl`** : Active ou désactive SSL (`true` ou `false`).
+
+#### **`mongo`**
+- **`host`** : Adresse du serveur MongoDB.
+- **`port`** : Port utilisé par MongoDB.
+- **`user`** : Utilisateur MongoDB.
+- **`password`** : Mot de passe MongoDB.
+- **`ssl`** : Active ou désactive SSL (`true` ou `false`).
+
+#### **`folder`**
+- **`folders`** : Liste des chemins de dossiers locaux à sauvegarder.
+
+
+#### **`s3`**
+- **`buckets`** : Liste des buckets à sauvegarder.
+- **`endpoint`** : URL de l'API S3.
+- **`region`** : Région du bucket.
+- **`ACCESS_KEY`** : Clé d'accèss (Pour l'instant en clair)
+- **`SECRET_KEY`** : Clé secrète (Pour l'instant en clair)
+
+<Aside type="danger">Les clés [] comme databases, folders ou buckets ne sont pas fonctionnelle à 100%, nous vous recommandons fortement de mettre qu'une seule valeur.</Aside>
+
+---
+
+### **`path`**
+- **Description** : Définit les emplacements de sauvegarde.
+- **Champs** :
+  - **`local`** : Chemin local où les sauvegardes seront stockées.
+  - **`s3`** : Chemin de destination dans un serveur S3.
+- **Exemple** :
+  ```yaml
+  path:
+    local: "./backups"
+    s3: "backup/glpi-dev/mysql"
+  ```
+
+---
+
+### **`retention`**
+- **Description** : Détermine la durée de conservation des sauvegardes.
+- **Champs** :
+  - **`standard`** : Nombre de jours pour conserver les sauvegardes locales.
+  - **`glacier`** : Nombre de jours pour conserver les sauvegardes sur Glacier (ou équivalent).
+- **Exemple** :
+  ```yaml
+  retention:
+    standard:
+      days: 14
+    glacier:
+      days: 365
+  ```
+
+---
+
+### **`schedule`**
+- **Description** : Définit les planifications des sauvegardes via une expression CRON.
+- **Champs** :
+  - **`standard`** : Fréquence pour les sauvegardes régulières.
+  - **`glacier`** : Fréquence pour les sauvegardes Glacier.
+- **Exemple** :
+  ```yaml
+  schedule:
+    standard: "*/50 * * * *"
+    glacier: "0 18 * * 5"
+  ```
+<Aside type="danger">Les cron jobs du glacier ne sont pas encore fonctionnelle, ça arrive sous peu !</Aside>
+
+---
