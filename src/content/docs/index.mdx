@@ -15,27 +15,22 @@ hero:
     #   icon: external
     #   variant: minimal
 ---
-import { Card } from '@astrojs/starlight/components';
-
-<Card title="UI (BETA)" icon="pencil">
-	![ui backup](../../assets/uibackup.webp)
-</Card>
+import { Card, CardGrid } from '@astrojs/starlight/components';
 
 {/* ## Next steps */}
 
-{/* <CardGrid stagger>
-// import { Card, CardGrid } from '@astrojs/starlight/components';
+<CardGrid>
 
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+	<Card title="Base de données" icon="database">
+		Sauvegarde MySQL, MariaDB et MongoDB. Bientôt PostgreSQL.
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+	<Card title="Fichiers" icon="pencil">
+		Sauvegarde de fichiers, dossiers et bucket S3.
 	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
+	<Card title="Interface de gestion" icon="setting">
+		Une interface de gestion pour gérer vos backups. (En cours de développement)
 	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	<Card title="Futur features" icon="rocket">
+		Sauvegarde Kubernetes, Emergency mode, Secret manager...
 	</Card>
-</CardGrid> */}
+</CardGrid>
