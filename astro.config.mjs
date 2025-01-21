@@ -4,8 +4,8 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://mini-backup.aidalinfo.fr',
-	base: 'doc-mini-backup',
+	site: 'https://mini-backup.aidalinfo.fr/',
+	base: '/',
 	integrations: [
 		starlight({
 			title: 'Mini backup',
