@@ -229,4 +229,72 @@ Sur la page d'accueil, nous avons notre liste des backups et nous pouvons clique
 
 Nous avons un encadré du backup qui sera restauré, nous pouvons cliquer sur le bouton de restauration pour récupérer notre base précédemment supprimée.
 
-![restauration](../../../../assets/SCR-20250122-ukgm.png)
+![restauration](../../../../assets/SCR-20250123-brel.png)
+![Notification](../../../../assets/SCR-20250123-brhk.png)
+
+Nous avons bien récupéré notre base de données !
+
+### Cli 
+
+Il est aussi possible de restaurer une sauvegarde depuis la ligne de commande.
+
+```bash
+docker exec mini-backup /app/backup-cli restore mongo last
+```
+
+Cette commande nous permet de lancer la cli avec l'argument `restore` et de spécifier le nom du backup à restaurer ainsi que la version à restaurer.
+
+Il est aussi possible de demander un backup antérieur.
+
+Il suffit de rajouter -it et de retirer last de la dernier commande.
+
+```bash
+docker exec -it mini-backup /app/backup-cli restore mongo
+```
+
+Sortie complète :
+
+```bash
+docker exec -it mini-backup /app/backup-cli restore mongo
+Voulez-vous restaurer le dernier backup pour mongo ? (y/n) : n
+🚀 DEV CONSOLE 🚀 -- [CORE_UTILS] No config path provided, using default config path
+🚀 DEV CONSOLE 🚀 -- [CORE_UTILS] Loading config from config/config.yaml
+🚀 DEV CONSOLE 🚀 -- [CORE_UTILS] Loading config file: config/server.yaml
+🚀 DEV CONSOLE 🚀 -- La section [minio] existe déjà dans le fichier credentials. Aucune modification nécessaire.
+🚀 DEV CONSOLE 🚀 -- S3Manager initialized
+Listing des backups disponibles :
+🚀 DEV CONSOLE 🚀 -- Liste des backups (préfixe: 'backup/mongo/mongo'): [backup/mongo/mongo/mongo-20250122_232400.bson.gz.enc backup/mongo/mongo/mongo-20250122_232600.bson.gz.enc backup/mongo/mongo/mongo-20250122_232800.bson.gz.enc backup/mongo/mongo/mongo-20250122_233000.bson.gz.enc backup/mongo/mongo/mongo-20250122_233800.bson.gz.enc backup/mongo/mongo/mongo-20250122_234000.bson.gz.enc backup/mongo/mongo/mongo-20250122_234200.bson.gz.enc backup/mongo/mongo/mongo-20250122_234600.bson.gz.enc backup/mongo/mongo/mongo-20250122_234800.bson.gz.enc backup/mongo/mongo/mongo-20250122_235000.bson.gz.enc backup/mongo/mongo/mongo-20250122_235200.bson.gz.enc backup/mongo/mongo/mongo-20250122_235400.bson.gz.enc]
+1. backup/mongo/mongo/mongo-20250122_232400.bson.gz.enc
+2. backup/mongo/mongo/mongo-20250122_232600.bson.gz.enc
+3. backup/mongo/mongo/mongo-20250122_232800.bson.gz.enc
+4. backup/mongo/mongo/mongo-20250122_233000.bson.gz.enc
+5. backup/mongo/mongo/mongo-20250122_233800.bson.gz.enc
+6. backup/mongo/mongo/mongo-20250122_234000.bson.gz.enc
+7. backup/mongo/mongo/mongo-20250122_234200.bson.gz.enc
+8. backup/mongo/mongo/mongo-20250122_234600.bson.gz.enc
+9. backup/mongo/mongo/mongo-20250122_234800.bson.gz.enc
+10. backup/mongo/mongo/mongo-20250122_235000.bson.gz.enc
+11. backup/mongo/mongo/mongo-20250122_235200.bson.gz.enc
+12. backup/mongo/mongo/mongo-20250122_235400.bson.gz.enc
+Sélectionnez un numéro de backup : 11
+🚀 DEV CONSOLE 🚀 -- Starting restore process for: mongo, version: mongo-20250122_235200.bson.gz.enc
+🚀 DEV CONSOLE 🚀 -- [CORE_UTILS] No config path provided, using default config path
+🚀 DEV CONSOLE 🚀 -- [CORE_UTILS] Loading config from config/config.yaml
+🚀 DEV CONSOLE 🚀 -- Detected MongoDB restore for mongo
+🚀 DEV CONSOLE 🚀 -- Starting restore process for: mongo, version: mongo-20250122_235200.bson.gz.enc
+🚀 DEV CONSOLE 🚀 -- [CORE_UTILS] Loading config file: config/server.yaml
+🚀 DEV CONSOLE 🚀 -- La section [minio] existe déjà dans le fichier credentials. Aucune modification nécessaire.
+🚀 DEV CONSOLE 🚀 -- S3Manager initialized
+🚀 DEV CONSOLE 🚀 -- Using specified backup version: mongo-20250122_235200.bson.gz.enc
+🚀 DEV CONSOLE 🚀 -- Fichier backup/mongo/mongo/mongo-20250122_235200.bson.gz.enc téléchargé avec succès vers backups/mongo-20250122_235200.bson.gz.enc
+🚀 DEV CONSOLE 🚀 -- Downloaded encrypted file to: backups/mongo-20250122_235200.bson.gz.enc
+🚀 DEV CONSOLE 🚀 -- Decrypted file to: backups/mongo-20250122_235200.bson.gz
+🚀 DEV CONSOLE 🚀 -- No decompression needed for: backups/mongo-20250122_235200.bson.gz
+Resultat de la restauration: backups/mongo-20250122_235200.bson.gz🚀 DEV CONSOLE 🚀 -- Starting MongoDB restore from: backups/mongo-20250122_235200.bson.gz
+🚀 DEV CONSOLE 🚀 -- MongoDB restore completed successfully from: backups/mongo-20250122_235200.bson.gz
+Restauration réussie pour mongo (version: mongo-20250122_235200.bson.gz.enc)
+```
+
+# Conclusion
+
+Des tutoriels et configuration d'exemple pour chaque type de backup sont dans la roadmap et nous espérons vous les proposer très bientôt.
