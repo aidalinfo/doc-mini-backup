@@ -183,3 +183,32 @@ Une fois la modification effectuée, nous allons relancer le docker compose.
 docker compose up -d && docker compose restart
 ```
 
+Pour s'assurer que tout ce passe bien nous pouvons vérifier les logs du conteneur.
+
+```bash
+docker logs mini-backup
+```
+
+Résultat :
+
+```
+🚀 DEV CONSOLE 🚀 -- Successfully compressed backups/mongo-20250122_222200.bson.gz
+🚀 DEV CONSOLE 🚀 -- [CORE_UTILS] Loading config file: config/server.yaml
+🚀 DEV CONSOLE 🚀 -- La section [minio] existe déjà dans le fichier credentials. Aucune modification nécessaire.
+🚀 DEV CONSOLE 🚀 -- S3Manager initialized
+🚀 DEV CONSOLE 🚀 -- Fichier backups/mongo-20250122_222200.bson.gz.enc téléversé avec succès vers backup/mongo/mongo/mongo-20250122_222200.bson.gz.enc
+🚀 DEV CONSOLE 🚀 -- Successfully uploaded backups/mongo-20250122_222200.bson.gz.enc to backup
+[backups/mongo-20250122_222200.bson.gz]
+🚀 DEV CONSOLE 🚀 -- Successfully backed up MongoDB for mongo: backups/mongo-20250122_222200.bson.gz
+```
+
+Maintenant nous allons créer une base et un document dans mongo.
+
+![mongo compass](../../../../assets/SCR-20250122-ufbi.png)
+
+Nous voyons que sur l'interface de minio, depuis la création du document, la taille du backup est un peu plus grande.
+
+![minio](../../../../assets/SCR-20250122-uhba.png)
+
+<Aside>L'interface de minio est accessible à l'adresse http://localhost:9001</Aside>
+
