@@ -176,6 +176,7 @@ Nous allons aussi décommenter la partie port de mongo, afin d'y accéder avec m
     ports:
       - 27017:27017
 ```
+## Vérification
 
 Une fois la modification effectuée, nous allons relancer le docker compose.
 
@@ -212,3 +213,20 @@ Nous voyons que sur l'interface de minio, depuis la création du document, la ta
 
 <Aside>L'interface de minio est accessible à l'adresse http://localhost:9001</Aside>
 
+**(Nous avons donc supprimer notre base de données pour tester la restauration)**
+
+## Restauration
+
+Pour restaurer nos données, nous avons par l'interface web ou la cli de mini-backup.
+
+### Web
+
+Rendez-vous sur http://localhost pour accéder à l'interface de mini-backup.
+
+Sur la page d'accueil, nous avons notre liste des backups et nous pouvons cliquer sur l'icône de restauration afin d'initier la procédure.
+
+![restauration](../../../../assets/SCR-20250122-uiph.png)
+
+Nous avons un encadré du backup qui sera restauré, nous pouvons cliquer sur le bouton de restauration pour récupérer notre base précédemment supprimée.
+
+![restauration](../../../../assets/SCR-20250122-ukgm.png)
