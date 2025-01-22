@@ -10,7 +10,7 @@ export default defineConfig({
 		starlight({
 			title: 'Mini backup',
 			social: {
-				github: 'https://github.com/withastro/starlight',
+				github: 'https://github.com/aidalinfo/mini-backup',
 			},
 			sidebar: [
 				{
