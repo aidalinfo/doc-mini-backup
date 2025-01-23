@@ -154,6 +154,12 @@ config.yaml server.yaml
 
 Le fichier config.yaml va contenir la configuration de nos backups, les identifiants de connexion à nos bases de données, chemin de sauvegarde, politique de rétention et cron.
 
+<LinkCard
+    title="En savoir plus"
+    href="/docs/configuration/backup"
+    description="Configuration détaillée des backups"
+/>
+
 Ici, nous allons éditer le fichier server.yaml pour indiquer le nom du bucket S3 et les identifiants de connexion pour héberger nos sauvegardes.
 
 Voici notre section rstorage après modification :
@@ -167,6 +173,11 @@ rstorage:
     secret_key: "${{MINIO_SECRET_KEY}}"
     region: "fr-par"
 ```
+<LinkCard
+    title="En savoir plus"
+    href="/docs/configuration/server"
+    description="Configuration détaillée du serveur"
+/>
 
 Nous allons aussi décommenter la partie port de mongo, afin d'y accéder avec mongo compass et y insérer des données.
 
