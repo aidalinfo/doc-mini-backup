@@ -7,13 +7,17 @@ description: Introduction a mini backup.
 
 import { Aside, LinkCard, CardGrid, FileTree } from '@astrojs/starlight/components';
 
-Mini Backup est conçu pour les environnements cloud, multicloud, ou encore les petites infrastructures domestiques utilisant Docker/Linux. Il permet de sauvegarder des bases de données, des chemins de dossiers locaux, de chiffrer les sauvegardes et de les déposer sur plusieurs serveurs S3.
+**Mini Backup** est une solution de sauvegarde conçue pour répondre aux besoins des environnements cloud, multicloud, et des infrastructures domestiques utilisant Docker/Linux. Grâce à sa configuration simple basée sur YAML, il permet de sauvegarder vos bases de données, fichiers, et dossiers tout en chiffrant les données avant de les stocker de manière sécurisée sur des serveurs S3.
 
 <Aside type="caution" title="En cours de développement">
   Ce logiciel est actuellement en beta version 0.0.1, donc il n'y a pas l'ensemble des fonctionnalités et tout n'est pas sécurisé.
 </Aside>
 
-## Structure
+---
+
+## Structure du projet
+
+Voici un aperçu des fichiers et dossiers principaux utilisés par Mini Backup :
 
 <FileTree>
 
@@ -22,7 +26,7 @@ Mini Backup est conçu pour les environnements cloud, multicloud, ou encore les 
     - backup-cli
     - .env
     - logs
-        - backup-tool.log
+        - mini-backup.log
     - config
         - config.yml
         - server.yml
@@ -31,9 +35,32 @@ Mini Backup est conçu pour les environnements cloud, multicloud, ou encore les 
 
 </FileTree>
 
-## config.yml
+---
+## Comment ça fonctionne ?
 
-Voici la configuration de trois backups différents, un pour une base de données MySQL, un pour un dossier et un pour une base de données MongoDB.
+Mini Backup repose sur deux fichiers principaux pour sa configuration : 
+
+- **`config.yml`** : Gère les tâches de sauvegarde.
+- **`server.yml`** : Configure le serveur et les espaces de stockage distants.
+
+### config.yml
+
+
+Ce fichier définit les tâches de sauvegarde, depuis leur création locale jusqu’à leur stockage final sur S3. Voici une explication des principaux éléments :
+
+- **`path`** :
+  - **`local`** : Chemin temporaire où les données sont sauvegardées, compressées et chiffrées avant leur transfert vers S3.
+  - **`s3`** : Chemin sur le serveur S3 où les sauvegardes seront stockées.
+  
+- **`retention`** :
+  - **Standard** : Durée de conservation des sauvegardes dans le stockage principal S3.
+  - **Glacier** : Durée de conservation des sauvegardes transférées vers Glacier (pour l’archivage à long terme).
+  
+- **`schedule`** :
+  - **Standard** : Fréquence des sauvegardes régulières.
+  - **Glacier** : Fréquence des transferts vers le stockage d’archivage.
+
+Voici un exemple de configuration avec trois tâches : une pour une base MySQL, une pour un dossier local, et une pour une base MongoDB.
 
 ```yaml
 backups:
@@ -100,10 +127,9 @@ backups:
     description="Configuration détaillée des backups"
 />
 
-## server.yml
+### server.yml
 
-Il existe le fichier server.yaml qui va permettre de configurer le port de l'API ou encore les rstorage (remote storage) pour les backups.
-Il est possible d'indiquer plusieurs endpoint S3 pour créer une redondance des backups.
+Ce fichier gère la configuration du serveur et des espaces de stockage distants. Vous pouvez définir plusieurs endpoints S3 pour assurer une redondance des sauvegardes.
 
 ```yaml
 server:
@@ -133,13 +159,12 @@ rstorage:
     description="Configuration détaillée du serveur"
 />
 
+## Démarrer avec Mini Backup
 
-Pour commencer avec les meilleures conditions, nous vous recommandons le guide de démarrage rapide.
+Pour débuter, suivez notre guide de démarrage rapide :
 
-{/* <CardGrid> */}
     <LinkCard
     title="Démarrage rapide"
     href="/docs/getting-started/start"
     description="Guide d'installation rapide avec docker'"
     />
-{/* </CardGrid> */}

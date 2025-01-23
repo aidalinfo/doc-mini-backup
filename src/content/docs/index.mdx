@@ -3,17 +3,17 @@ title: Mini backup
 description: Configurer vos backup en YAML et profiter d'une CLI & UI
 template: splash
 hero:
-  tagline: Configurer vos backup en YAML et profiter d'une CLI & UI!
+  tagline: Configurez vos sauvegardes en toute simplicité avec YAML et visualisez-les facilement via une CLI ou une interface web.
   image:
     file: ../../assets/229383837_11060576.jpg
   actions:
     - text: Documentation
       link: /docs/introduction
       icon: right-arrow
-    # - text: Read the Starlight docs
-    #   link: https://starlight.astro.build
-    #   icon: external
-    #   variant: minimal
+    - text: Guide de démarrage rapide
+      link: https://mini-backup.aidalinfo.fr/docs/getting-started/start/
+      icon: external
+      variant: minimal
 ---
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
@@ -22,15 +22,15 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 <CardGrid>
 
 	<Card title="Base de données" icon="seti:lock">
-		Sauvegarde MySQL, MariaDB et MongoDB. Bientôt PostgreSQL.
+		Sauvegardez MySQL, MariaDB et MongoDB. PostgreSQL sera bientôt disponible !
 	</Card>
 	<Card title="Fichiers" icon="pencil">
-		Sauvegarde de fichiers, dossiers et bucket S3.
+    	Gérez les sauvegardes de fichiers locaux, dossiers et buckets S3.
 	</Card>
 	<Card title="Interface de gestion" icon="setting">
-		Une interface de gestion pour gérer vos backups. (En cours de développement)
+    	Une CLI et une interface web pour visualiser vos configurations et restaurer facilement vos sauvegardes.
 	</Card>
 	<Card title="Futur features" icon="rocket">
-		Sauvegarde Kubernetes, Emergency mode, Secret manager...
+    	Prochaines étapes : sauvegardes Kubernetes, mode urgence, gestion des secrets, et plus encore.
 	</Card>
 </CardGrid>

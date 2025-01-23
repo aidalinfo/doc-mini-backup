@@ -6,7 +6,16 @@ description: Démarrage rapide avec mini backup.
 ---
 import { Aside, LinkCard, CardGrid, FileTree } from '@astrojs/starlight/components';
 
-Pour faciliter la compréhension de l'outil, nous avons décidé d'utiliser docker pour vous proposes une configuration simple et fonctionnelle.
+Pour simplifier l’utilisation de Mini Backup, nous avons conçu une configuration basée sur **Docker** et **Docker Compose**. Ce guide vous accompagnera pas à pas pour installer et configurer l’outil rapidement.
+
+
+## Prérequis
+
+Assurez-vous d’avoir installé :
+- **Docker**
+- **Docker Compose**
+
+Si ce n’est pas déjà fait, vous pouvez consulter la documentation officielle de Docker pour les instructions d’installation.
 
 ## Installation
 
@@ -35,8 +44,11 @@ cd mini-backup-getting-started-main
 
 ## Explication docker compose
 
-En premier nous avons un conteneur minio qui va nous permettre de créer un bucket pour les sauvegardes.
-Nous avons aussi un conteneur pour la création du bucket.
+Voici un aperçu des principaux conteneurs définis dans le fichier docker-compose.yml.
+
+### minio
+
+Le conteneur Minio simule un serveur S3 pour héberger vos sauvegardes. Un deuxième conteneur crée automatiquement un bucket nommé backup.
 
 ```yaml
     image: minio/minio
@@ -64,9 +76,9 @@ Nous avons aussi un conteneur pour la création du bucket.
       /usr/bin/mc policy download minio/backup;
       exit 0;
 ```
+### mini-backup
 
-Ensuite le conteneur mini-backup, qui va contenir la CLI, le serveur et l'API.
-AUTO_CONFIG va nous permettre de généré automatiquement les fichier de configuration requis.
+Ce conteneur inclut la CLI, le serveur et l’API. L’environnement AUTO_CONFIG génère automatiquement les fichiers de configuration.
 
 AES KEY est la clé AES utilisée pour chiffrer les sauvegardes, vous pouvez en générer une avec la commande ```openssl rand -base64 32```
 
@@ -85,7 +97,9 @@ AES KEY est la clé AES utilisée pour chiffrer les sauvegardes, vous pouvez en 
       - AES_KEY=582e9ffb85124ee9b8cd572927ef671648e9dedd36f5352f755750930a2248d6
 ```
 
-Pour la partie frontend et communication nous avons le conteneur de frontend et nginx.
+### frontend et nginx
+
+L’interface web et le serveur API communiquent via Nginx.
 
 ```yaml
   ui-mini-backup:
@@ -107,10 +121,12 @@ Pour la partie frontend et communication nous avons le conteneur de frontend et 
 ```
 <Aside type="caution" title="Communication">
     Aucune variable d'environment peut être définie pour le conteneur frontend.
-    nginx nous sert à exposer l'api de mini-backup sur localhost/api afin que le frontend puisse communiquer avec.
+    Nginx expose l’API de Mini Backup sur `localhost/api` pour permettre la communication.
 </Aside>
 
-Enfin, pour réaliser nos tests, nous avons un conteneur mariadb et un conteneur mongo.
+### MariaDB et MongoDB
+
+Des conteneurs MariaDB et MongoDB sont également définis pour réaliser des tests avec Mini Backup.
 
 ```yaml
 
@@ -139,20 +155,26 @@ Enfin, pour réaliser nos tests, nous avons un conteneur mariadb et un conteneur
       MONGO_INITDB_ROOT_PASSWORD: example
 ```
 
+## Lancer les conteneurs
+
 Maintenant nous allons faire un ```docker compose up``` pour lancer les conteneurs et générer les fichiers de configuration.
 
 ```bash
 docker compose up -d
 ```
 
-Deux fichier vont apparaître dans le dossier config
+## Configuration
+
+Après le lancement, deux fichiers de configuration seront générés dans le dossier config :
 
 ```bash
 ➜  mini-backup-getting-started-main ls config
 config.yaml server.yaml
 ```
 
-Le fichier config.yaml va contenir la configuration de nos backups, les identifiants de connexion à nos bases de données, chemin de sauvegarde, politique de rétention et cron.
+- **config.yaml** : Contient la configuration des backups, y compris les identifiants des bases de données, les chemins de sauvegarde, et les règles de rétention.
+- **server.yaml** : Définit les endpoints S3 et les paramètres du serveur.
+
 
 <LinkCard
     title="En savoir plus"
@@ -160,7 +182,7 @@ Le fichier config.yaml va contenir la configuration de nos backups, les identifi
     description="Configuration détaillée des backups"
 />
 
-Ici, nous allons éditer le fichier server.yaml pour indiquer le nom du bucket S3 et les identifiants de connexion pour héberger nos sauvegardes.
+Éditez le fichier server.yaml pour indiquer le nom du bucket S3 et les identifiants de connexion pour héberger vos sauvegardes.
 
 Voici notre section rstorage après modification :
 
@@ -179,7 +201,7 @@ rstorage:
     description="Configuration détaillée du serveur"
 />
 
-Nous allons aussi décommenter la partie port de mongo, afin d'y accéder avec mongo compass et y insérer des données.
+Nous allons aussi exposer le port de mongo, afin d'y accéder avec mongo compass et y insérer des données.
 
 <Aside>Vous pouvez aussi demander à GPT un script pour mysql ou autre, l'objectif est de voir comment restaurer nos données.</Aside>
 
@@ -189,13 +211,13 @@ Nous allons aussi décommenter la partie port de mongo, afin d'y accéder avec m
 ```
 ## Vérification
 
-Une fois la modification effectuée, nous allons relancer le docker compose.
+Une fois les modifications apportées, relancez les conteneurs :
 
 ```bash
 docker compose up -d && docker compose restart
 ```
 
-Pour s'assurer que tout ce passe bien nous pouvons vérifier les logs du conteneur.
+Consultez les journaux pour vérifier que tout fonctionne correctement :
 
 ```bash
 docker logs mini-backup
@@ -228,40 +250,43 @@ Nous voyons que sur l'interface de minio, depuis la création du document, la ta
 
 ## Restauration
 
-Pour restaurer nos données, nous avons par l'interface web ou la cli de mini-backup.
+Vous pouvez restaurer vos sauvegardes en utilisant soit l’interface web, soit la ligne de commande.
 
 ### Web
 
-Rendez-vous sur http://localhost pour accéder à l'interface de mini-backup.
+Accédez à l’interface de Mini Backup à l’adresse http://localhost/
 
-Sur la page d'accueil, nous avons notre liste des backups et nous pouvons cliquer sur l'icône de restauration afin d'initier la procédure.
+Sur la page d'accueil, sélectionnez un backup dans la liste et cliquez sur l'icône de restauration.
 
 ![restauration](../../../../assets/SCR-20250122-uiph.png)
 
-Nous avons un encadré du backup qui sera restauré, nous pouvons cliquer sur le bouton de restauration pour récupérer notre base précédemment supprimée.
+Un encadré s’affiche pour confirmer la restauration. Cliquez sur le bouton de restauration pour récupérer vos données.
 
 ![restauration](../../../../assets/SCR-20250123-brel.png)
 ![Notification](../../../../assets/SCR-20250123-brhk.png)
 
-Nous avons bien récupéré notre base de données !
+Une fois terminé, vos données seront restaurées avec succès !
 
 ### Cli 
 
-Il est aussi possible de restaurer une sauvegarde depuis la ligne de commande.
+**Exécutez la commande suivante pour restaurer la dernière version d’un backup :**
 
 ```bash
 docker exec mini-backup /app/backup-cli restore mongo last
 ```
 
-Cette commande nous permet de lancer la cli avec l'argument `restore` et de spécifier le nom du backup à restaurer ainsi que la version à restaurer.
+Cette commande spécifie le nom du backup (mongo) et utilise le mot-clé last pour récupérer la version la plus récente.
 
-Il est aussi possible de demander un backup antérieur.
+**Pour restaurer une version antérieure :**
 
 Il suffit de rajouter -it et de retirer last de la dernier commande.
 
 ```bash
 docker exec -it mini-backup /app/backup-cli restore mongo
 ```
+
+Cette commande vous demandera de sélectionner une version parmi les backups disponibles.
+
 
 Sortie complète :
 
@@ -308,4 +333,8 @@ Restauration réussie pour mongo (version: mongo-20250122_235200.bson.gz.enc)
 
 # Conclusion
 
-Des tutoriels et configuration d'exemple pour chaque type de backup sont dans la roadmap et nous espérons vous les proposer très bientôt.
+Mini Backup est conçu pour vous offrir une solution de sauvegarde simple et efficace, adaptée à vos besoins. Bien que certaines fonctionnalités soient encore en développement, l’outil vous permet déjà de gérer vos backups avec flexibilité et sécurité.
+
+Nous travaillons activement à enrichir Mini Backup avec des tutoriels détaillés et des configurations d’exemple pour chaque type de sauvegarde. Ces améliorations seront bientôt disponibles afin de rendre l’expérience encore plus fluide et complète.
+
+N'hésitez pas à nous faire des retours, et restez à l’écoute pour les prochaines mises à jour !
